@@ -29,6 +29,7 @@ import com.github.scribejava.apis.GoogleApi20;
 import com.github.scribejava.apis.GitHubApi;
 
 import com.github.scribejava.apis.ConfigurableApi;
+import com.github.scribejava.apis.ConfigurableApi10a;
 import com.github.scribejava.apis.SlackApi;
 
 import com.facebook.react.bridge.ReadableMap;
@@ -47,9 +48,13 @@ public class OAuthManagerProviders {
   ) {
     if (providerName.equalsIgnoreCase("twitter")) {
       return OAuthManagerProviders.twitterService(params, opts, callbackUrl);
-    } else {
-      return null;
     }
+
+    if (params.containsKey("access_token_url") && params.containsKey("authorize_url")) {
+      return OAuthManagerProviders.configurableService10a(params, opts, callbackUrl);
+    }
+
+    return null;
   }
 
   static public OAuth20Service getApiFor20Provider(
@@ -156,6 +161,26 @@ public class OAuthManagerProviders {
     return request;
   }
 
+  private static OAuth10aService configurableService10a(
+    final HashMap cfg,
+    @Nullable final ReadableMap opts,
+    final String callbackUrl) {
+    ServiceBuilder builder = OAuthManagerProviders._oauth1ServiceBuilder(cfg, opts, callbackUrl);
+    Log.d(TAG, "Creating ConfigurableApi");
+    //Log.d(TAG, "    authorize_url:     " + cfg.get("authorize_url"));
+    //Log.d(TAG, "    access_token_url:  " + cfg.get("access_token_url"));
+    ConfigurableApi10a api = ConfigurableApi10a.instance()
+      .setAccessTokenEndpoint((String) cfg.get("access_token_url"))
+      .setAuthorizationBaseUrl((String) cfg.get("authorize_url"))
+      .setRequestTokenEndpoint((String) cfg.get("request_token_url"));
+    if (cfg.containsKey("access_token_verb")) {
+      //Log.d(TAG, "    access_token_verb: " + cfg.get("access_token_verb"));
+      api.setAccessTokenVerb((String) cfg.get("access_token_verb"));
+    }
+
+    return builder.build(api);
+  }
+
   private static OAuth10aService twitterService(
     final HashMap cfg,
     @Nullable final ReadableMap opts,
@@ -238,6 +263,55 @@ public class OAuthManagerProviders {
     Log.d(TAG, "Make the builder: " + SlackApi.class);
     ServiceBuilder builder = OAuthManagerProviders._oauth2ServiceBuilder(cfg, opts, callbackUrl);
     return builder.build(SlackApi.instance());
+  }
+
+  private static ServiceBuilder _oauth1ServiceBuilder(
+    final HashMap cfg,
+    @Nullable final ReadableMap opts,
+    final String callbackUrl
+  ) {
+    String clientKey = (String) cfg.get("consumer_key");
+    String clientSecret = (String) cfg.get("consumer_secret");
+    String state;
+    if (cfg.containsKey("state")) {
+      state = (String) cfg.get("state");
+    } else {
+      state = TAG + new Random().nextInt(999_999);
+    }
+
+    // Builder
+    ServiceBuilder builder = new ServiceBuilder()
+      .apiKey(clientKey)
+      .apiSecret(clientSecret)
+      .state(state)
+      .debug();
+
+    Log.d(TAG, "** " + cfg.get("scopes"));
+
+    // Empty scopes are not allowed, but if a scope is given the signature breaks!!
+    
+    // String scopes = "";
+    // if (cfg.containsKey("scopes")) {
+    //   scopes = (String) cfg.get("scopes");
+    //   String scopeStr = OAuthManagerProviders.getScopeString(scopes, ",");
+    //   builder.scope(scopeStr);
+    // }
+
+    // if (opts != null && opts.hasKey("scopes") && opts.getString("scopes") != "") {
+    //   Log.d(TAG, "** A1 ");
+    //   scopes = (String) opts.getString("scopes");
+    //   Log.d(TAG, "** scopes " + scopes);
+    //   String scopeStr = OAuthManagerProviders.getScopeString(scopes, ",");
+    //   Log.d(TAG, "** scopeStr " + scopeStr);
+    //   builder.scope(scopeStr);
+    //   Log.d(TAG, "** An");
+    // }
+
+    if (callbackUrl != null) {
+      builder.callback(callbackUrl);
+    }
+
+    return builder;
   }
 
   private static ServiceBuilder _oauth2ServiceBuilder(

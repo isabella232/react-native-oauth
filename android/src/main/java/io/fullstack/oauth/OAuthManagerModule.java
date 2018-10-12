@@ -114,7 +114,11 @@ class OAuthManagerModule extends ReactContextBaseJavaModule {
       final String authVersion = (String) cfg.get("auth_version");
       Activity activity = this.getCurrentActivity();
       FragmentManager fragmentManager = activity.getFragmentManager();
-      String callbackUrl = "http://localhost/" + providerName;
+      String callbackUrl = (String) cfg.get("callback_url");
+
+      if (callbackUrl == null) {
+        String callbackUrl = "http://localhost/" + providerName;
+      }
       
       OAuthManagerOnAccessTokenListener listener = new OAuthManagerOnAccessTokenListener() {
         public void onRequestTokenError(final Exception ex) {

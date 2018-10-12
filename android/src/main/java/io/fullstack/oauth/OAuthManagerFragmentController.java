@@ -183,7 +183,7 @@ public class OAuthManagerFragmentController {
       String oauthToken = responseUri.getQueryParameter("oauth_token");
       String oauthVerifier = responseUri.getQueryParameter("oauth_verifier");
       Load1AccessTokenTask task = new Load1AccessTokenTask(
-        this, webView, oauth1RequestToken, oauthVerifier);
+        this, webView, oauth1RequestToken, "");
       task.execute();
     } else if (authVersion.equals("2.0")) {
       String code = responseUri.getQueryParameter("code");
