@@ -117,7 +117,7 @@ class OAuthManagerModule extends ReactContextBaseJavaModule {
       String callbackUrl = (String) cfg.get("callback_url");
 
       if (callbackUrl == null) {
-        String callbackUrl = "http://localhost/" + providerName;
+        callbackUrl = "http://localhost/" + providerName;
       }
       
       OAuthManagerOnAccessTokenListener listener = new OAuthManagerOnAccessTokenListener() {
