@@ -14,7 +14,7 @@ public class ConfigurableApi extends DefaultApi20 {
 
     private String authorizationBaseUrl;
 
-    private Verb accessTokenVerb = Verb.GET;
+    private Verb accessTokenVerb = Verb.POST;
 
     protected ConfigurableApi() {
     }

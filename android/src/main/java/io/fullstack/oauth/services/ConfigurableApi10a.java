@@ -14,7 +14,7 @@ public class ConfigurableApi10a extends DefaultApi10a {
 
     private String requestTokenEndpoint;
 
-    private Verb accessTokenVerb = Verb.GET;
+    private Verb accessTokenVerb = Verb.POST;
 
     protected ConfigurableApi10a() {
     }
@@ -56,8 +56,7 @@ public class ConfigurableApi10a extends DefaultApi10a {
 
     @Override
     public Verb getAccessTokenVerb() {
-        // return accessTokenVerb;
-      return Verb.POST;
+        return accessTokenVerb;
     }
 
     @Override
@@ -78,6 +77,6 @@ public class ConfigurableApi10a extends DefaultApi10a {
     @Override
     public String getAuthorizationUrl(OAuth1RequestToken requestToken) {
         // TODO: GET THE OAUTH CALLBACK
-        return authorizationBaseUrl + "?oauth_token=" + requestToken.getToken() + "&oauth_callback=http%3A%2F%2Flocalhost%2Ftripit";
+        return authorizationBaseUrl + "?oauth_token=" + requestToken.getToken() + "&oauth_callback=com.tmrow.greenbit%3A%2F%2Foauth-response%2Ftripit";
     }
 }
