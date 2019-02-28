@@ -77,6 +77,6 @@ public class ConfigurableApi10a extends DefaultApi10a {
     @Override
     public String getAuthorizationUrl(OAuth1RequestToken requestToken) {
         // TODO: GET THE OAUTH CALLBACK
-        return authorizationBaseUrl + "?oauth_token=" + requestToken.getToken();
+        return authorizationBaseUrl + "?oauth_token=" + requestToken.getToken() + "&oauth_callback=http%3A%2F%2Flocalhost%2Fmapedit";
     }
 }
