@@ -77,6 +77,6 @@ public class ConfigurableApi10a extends DefaultApi10a {
     @Override
     public String getAuthorizationUrl(OAuth1RequestToken requestToken) {
         // TODO: GET THE OAUTH CALLBACK
-        return authorizationBaseUrl + "?oauth_token=" + requestToken.getToken() + "&oauth_callback=com.tmrow.greenbit%3A%2F%2Foauth-response%2Ftripit";
+        return authorizationBaseUrl + "?oauth_token=" + requestToken.getToken();
     }
 }
